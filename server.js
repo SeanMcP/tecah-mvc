@@ -11,6 +11,8 @@ const session = require('express-session')
 const flash = require('express-flash-messages')
 const User = require('./models/user')
 const Doc = require('./models/doc')
+const shortid = require('shortid')
+const mime = require('mime')
 
 // Busboy Requires
 const fs = require('fs-extra')
@@ -77,16 +79,17 @@ app.use(routes)
 
 // Busboy code
 app.post('/upload', function (req, res) {
-  let busboy = new Busboy({headers: req.headers })
+  let busboy = new Busboy({headers: req.headers})
   busboy.on('file', function(fieldname, file, filename, encoding, mimetype) {
-    let saveTo = path.join('./public/uploads/', path.basename(filename))
+    console.log('mime.extension(mimetype): ', mime.extension(mimetype));
+    let saveTo = path.join('./public/uploads/', path.basename(shortid.generate() + '.' + mime.extension(mimetype)))
     file.pipe(fs.createWriteStream(saveTo))
+    console.log('mimetype: ', mimetype);
   })
   busboy.on('finish', function() {
     res.writeHead(200, {'Connection': 'close'})
     res.end("Uploaded file to: /uploads")
   })
-  //Parse HTTP-POST upload
   return req.pipe(busboy)
 })
 

@@ -6,6 +6,7 @@ const Schema = mongoose.Schema
 const docSchema = new mongoose.Schema({
   username: String,
   category: String,
+  date: {type: Date, default: Date.now},
   downloads: Number,
   likes: [String],
   source: String,
