@@ -76,15 +76,28 @@ app.use(passport.session())
 app.use(flash())
 
 app.use(routes)
+function createDoc(req) {
 
+}
 // Busboy code
 app.post('/upload', function (req, res) {
   let busboy = new Busboy({headers: req.headers})
   busboy.on('file', function(fieldname, file, filename, encoding, mimetype) {
-    console.log('mime.extension(mimetype): ', mime.extension(mimetype));
-    let saveTo = path.join('./public/uploads/', path.basename(shortid.generate() + '.' + mime.extension(mimetype)))
+    let newFilename = shortid.generate() + '.' + mime.extension(mimetype)
+    let saveTo = path.join('./public/uploads/', path.basename(newFilename))
     file.pipe(fs.createWriteStream(saveTo))
-    console.log('mimetype: ', mimetype);
+
+    // console.log('req.body: ', req.body);
+    Doc.create({
+      username: req.user.username,
+      category: req.body.category,
+      downloads: 0,
+      source: '/uploads/' + newFilename,
+      // tags: req.body.tags.toLowerCase().replace(/\s+/g, '').split(','),
+      title: req.body.title,
+      views: 0
+    })
+
   })
   busboy.on('finish', function() {
     res.writeHead(200, {'Connection': 'close'})

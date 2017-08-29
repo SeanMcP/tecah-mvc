@@ -7,12 +7,12 @@ const docSchema = new mongoose.Schema({
   username: String,
   category: String,
   date: {type: Date, default: Date.now},
-  downloads: Number,
+  downloads: {type: Number, default: 0},
   likes: [String],
   source: String,
   tags: [String],
   title: String,
-  views: Number
+  views: {type: Number, default: 0}
 })
 
 const Doc = mongoose.model('Doc', docSchema)
