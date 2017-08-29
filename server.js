@@ -10,6 +10,11 @@ const LocalStrategy = require('passport-local').Strategy
 const session = require('express-session')
 const flash = require('express-flash-messages')
 const User = require('./models/user')
+const Doc = require('./models/doc')
+
+// Busboy Requires
+const fs = require('fs-extra')
+const Busboy = require('busboy')
 
 const app = express()
 
@@ -20,9 +25,7 @@ app.set('views', path.join(__dirname, 'views'))
 app.set('view engine', 'mustache')
 app.set('layout', 'layout')
 
-app.use(bodyParser.urlencoded({
-  extended: false
-}))
+app.use(bodyParser.urlencoded({extended: false}))
 
 app.use(morgan('dev'))
 
@@ -71,6 +74,21 @@ app.use(passport.session())
 app.use(flash())
 
 app.use(routes)
+
+// Busboy code
+app.post('/upload', function (req, res) {
+  let busboy = new Busboy({headers: req.headers })
+  busboy.on('file', function(fieldname, file, filename, encoding, mimetype) {
+    let saveTo = path.join('./public/uploads/', path.basename(filename))
+    file.pipe(fs.createWriteStream(saveTo))
+  })
+  busboy.on('finish', function() {
+    res.writeHead(200, {'Connection': 'close'})
+    res.end("Uploaded file to: /uploads")
+  })
+  //Parse HTTP-POST upload
+  return req.pipe(busboy)
+})
 
 app.listen(3000, function() {
   console.log('App is running on localhost:3000')

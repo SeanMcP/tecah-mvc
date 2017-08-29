@@ -54,6 +54,10 @@ router.post('/signup', function(req, res) {
   })
 })
 
+router.get('/upload', requireLogin, function(req, res) {
+  res.render('upload')
+})
+
 router.get('/user', requireLogin, function(req, res) {
   res.render('user', {username: req.user.username})
 })

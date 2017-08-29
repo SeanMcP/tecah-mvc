@@ -1,0 +1,14 @@
+<form action="/upload" method="post" enctype="multipart/form-data">
+  <input type="text" name="title" value="" placeholder="Title of your document" autofocus>
+  <input type="file" name="file">
+  <select name="category">
+    <option value="">Select from the following:</option>
+    <option value="business">Business</option>
+    <option value="education">Education</option>
+    <option value="home">Home</option>
+    <option value="personal">Personal</option>
+  </select>
+  <input type="text" name="tags" value="" placeholder="Separated by commas">
+  <input type="submit" value="Upload">
+  <!-- <button type="submit" name="button">Upload</button> -->
+</form>
