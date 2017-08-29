@@ -4,52 +4,53 @@ const router = express.Router()
 const mongoose = require('mongoose')
 const passport = require('passport')
 
-mongoose.connect('mongodb://localhost:27017/userDB')
+mongoose.connect('mongodb://localhost:27017/tecah')
 
 const requireLogin = function (req, res, next) {
   if (req.user) {
     console.log(req.user)
     next()
   } else {
-    res.redirect('/')
+    res.redirect('/login')
   }
 }
 
 const login = function (req, res, next) {
   if (req.user) {
-    res.redirect('/user')
+    res.redirect('/')
   } else {
     next()
   }
 }
 
-router.get('/', login, function(req, res) {
-  res.render('index', {
+router.get('/', function(req, res) {
+  res.render('index')
+})
+
+router.get('/login', login, function(req, res) {
+  res.render('login', {
     messages: res.locals.getMessages()
   })
 })
 
-router.post('/', passport.authenticate('local', {
-  successRedirect: '/user',
-  failureRedirect: '/',
+router.post('/login', passport.authenticate('local', {
+  successRedirect: '/',
+  failureRedirect: '/login',
   failureFlash: true
 }))
-
-router.get('/signup', function(req, res) {
-  res.render('signup')
-})
 
 router.post('/signup', function(req, res) {
   User.create({
     username: req.body.username,
-    password: req.body.password
+    password: req.body.password,
+    email: req.body.email
   }).then(function(data) {
     console.log(data)
-    res.redirect('/')
+    res.redirect('/login')
   })
   .catch(function(err) {
     console.log(err)
-    res.redirect('/signup')
+    res.redirect('/login')
   })
 })
 
